@@ -54,8 +54,6 @@ resources:
             Value: ${self:provider.tags.tf_managed}
           - Key: Name
             Value: ${self:provider.environment.DYNAMODB_TABLE_NAME}
-          - Key: Team
-            Value: ${self:provider.tags.Team}
           - Key: Project
             Value: ${self:provider.tags.Project}
 
