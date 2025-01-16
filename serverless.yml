@@ -7,7 +7,7 @@ provider:
   # stage: prod
   # timeout: 120
   environment:
-    DYNAMODB_TABLE_NAME: sre-ebs-cleaner-history
+    DYNAMODB_TABLE_NAME: lambda-ebs-cleaner-history
   tags:
     tf_managed: "false"
     Name: "lambda-ebs-cleaner"
