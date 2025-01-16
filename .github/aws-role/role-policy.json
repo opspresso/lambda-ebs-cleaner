@@ -32,17 +32,19 @@
     {
       "Effect": "Allow",
       "Action": [
-        "events:*"
-      ],
-      "Resource": "arn:aws:events:*:*:rule/lambda-ebs-cleaner-*"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
         "s3:*"
       ],
       "Resource": [
         "arn:aws:s3:::lambda-ebs-cleaner-*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:*"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:*:*:table/sre-ebs-cleaner-*"
       ]
     }
   ]
