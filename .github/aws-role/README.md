@@ -41,8 +41,9 @@ aws iam attach-role-policy --role-name "${NAME}" --policy-arn "${POLICY_ARN}"
 
 ```yaml
 
+
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1.7.0
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: "arn:aws:iam::396608815058:role/lambda-ebs-cleaner"
           role-session-name: github-actions-ci-bot
