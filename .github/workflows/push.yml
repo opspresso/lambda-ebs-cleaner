@@ -61,8 +61,8 @@ jobs:
           role-session-name: github-actions-ci-bot
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Deploy to AWS at Seoul 🇰🇷
-        run: npx serverless deploy --region ap-northeast-2
-
       - name: Deploy to AWS at Virginia 🇺🇸
         run: npx serverless deploy --region us-east-1
+
+      - name: Deploy to AWS at Seoul 🇰🇷
+        run: npx serverless deploy --region ap-northeast-2
