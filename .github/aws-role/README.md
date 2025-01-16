@@ -41,7 +41,6 @@ aws iam attach-role-policy --role-name "${NAME}" --policy-arn "${POLICY_ARN}"
 
 ```yaml
 
-
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
