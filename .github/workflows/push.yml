@@ -1,0 +1,68 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: "ap-northeast-2"
+  AWS_ROLE_ARN: "arn:aws:iam::396608815058:role/lambda-ebs-cleaner"
+
+  EXCLUDED_CLUSTERS: "${{ vars.EXCLUDED_CLUSTERS }}"
+  EXCLUDED_NAMESPACES: "${{ vars.EXCLUDED_NAMESPACES }}"
+  RETENTION_DAYS: "${{ vars.RETENTION_DAYS }}"
+
+  SLACK_WEBHOOK_URL: "${{ secrets.SLACK_WEBHOOK_URL }}"
+
+# Permission can be added at job level or workflow level
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python 3.9 🐍
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Python dependencies
+        run: npx serverless plugin install --name serverless-python-requirements
+
+      - name: Install dotenv plugin
+        run: npx serverless plugin install --name serverless-dotenv-plugin
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Set up environment variables 📝
+        run: |
+          echo "EXCLUDED_CLUSTERS=${EXCLUDED_CLUSTERS}" >> .env
+          echo "EXCLUDED_NAMESPACES=${EXCLUDED_NAMESPACES}" >> .env
+          echo "RETENTION_DAYS=${RETENTION_DAYS}" >> .env
+          echo "SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}" >> .env
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          role-session-name: github-actions-ci-bot
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to AWS at Seoul 🇰🇷
+        run: npx serverless deploy --region ap-northeast-2
+
+      - name: Deploy to AWS at Virginia 🇺🇸
+        run: npx serverless deploy --region us-east-1

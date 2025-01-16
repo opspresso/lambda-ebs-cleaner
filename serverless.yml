@@ -1,0 +1,64 @@
+service: lambda-ebs-cleaner
+
+provider:
+  name: aws
+  region: ap-northeast-2
+  runtime: python3.9
+  # stage: prod
+  # timeout: 120
+  environment:
+    DYNAMODB_TABLE_NAME: sre-ebs-cleaner-history
+  tags:
+    tf_managed: "false"
+    Name: "lambda-ebs-cleaner"
+    Project: "opspresso/lambda-ebs-cleaner"
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource:
+        - "arn:aws:dynamodb:*:*:table/${self:provider.environment.DYNAMODB_TABLE_NAME}"
+    - Effect: "Allow"
+      Action:
+        - "ec2:DescribeVolumes"
+        - "ec2:DeleteVolume"
+      Resource: "*"
+
+functions:
+  cleaning:
+    handler: handler.lambda_handler
+    events:
+      - schedule:
+          rate: cron(0 0 * * ? *) # 매일 자정에 실행
+
+resources:
+  Resources:
+    DynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE_NAME}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        TimeToLiveSpecification:
+          AttributeName: expire_at
+          Enabled: true
+        Tags:
+          - Key: tf_managed
+            Value: ${self:provider.tags.tf_managed}
+          - Key: Name
+            Value: ${self:provider.environment.DYNAMODB_TABLE_NAME}
+          - Key: Team
+            Value: ${self:provider.tags.Team}
+          - Key: Project
+            Value: ${self:provider.tags.Project}
+
+plugins:
+  - serverless-python-requirements
+  - serverless-dotenv-plugin

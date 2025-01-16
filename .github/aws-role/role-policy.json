@@ -1,0 +1,49 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cloudformation:ValidateTemplate"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cloudformation:*"
+      ],
+      "Resource": "arn:aws:cloudformation:*:*:stack/lambda-ebs-cleaner-*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "lambda:*"
+      ],
+      "Resource": "arn:aws:lambda:*:*:function:lambda-ebs-cleaner-*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iam:*"
+      ],
+      "Resource": "arn:aws:iam::*:role/lambda-ebs-cleaner-*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "events:*"
+      ],
+      "Resource": "arn:aws:events:*:*:rule/lambda-ebs-cleaner-*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:*"
+      ],
+      "Resource": [
+        "arn:aws:s3:::lambda-ebs-cleaner-*"
+      ]
+    }
+  ]
+}
